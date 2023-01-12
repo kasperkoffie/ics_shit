@@ -73,6 +73,8 @@ time.sleep(1)
 # with question_answer = boolean/integer/multipleQuestion(question here)
 
 # Acess Control Section
+access_control_suggestions = []
+
 external_systems = booleanQuestion("Are there any external systems or networks connected to your ICS (e.g. remote access for maintenance and support, third-party vendors)?")
 
 dmz_protection = booleanQuestion("Are the important resources protected by a DMZ?")
@@ -121,4 +123,26 @@ critical_hardware_redudancy = booleanQuestion("Is critical hardware structured r
 
 # If shared networks, recommend to either segment it properly or to use secure cloud providers
 how_connected = multipleQuestion("How are your ICS and IT systems connected?", ["Dedicated segmented networks", "Shared networks", "Cloud-based systems from secure providers"])
+
+user_available = booleanQuestion("Are separate user accounts used for each employee and access to devices?")
+user_passwords = booleanQuestion("Is there a password policy in place to ensure secure user passwords?")
+if user_available:
+    user_roles = booleanQuestion("Is there role-based access control for the usrers?")
+    if user_roles:
+        user_least_privilege = booleanQuestion("Is the least-privilege principle enforced for those roles and user accounts?")
+
+security_technology = multipleQuestion("What types of security devices and technologies are used in you factory?", ["Firewalls", "Intrusion Detection Systems", "SIEM Systems"])
+
+print("Initializing Section 2: System Integrity")
+time.sleep(1)
+# System Integrity Section
+system_integrity_suggestions = []
+
+protocols = multipleQuestion("What are the main communication protocols used in your factory?", ["Ethernet/IP", "Modbus", "OPC UA", "MQTT"])
+incident_response = booleanQuestion("Are there any incident response plans and procedures in place in case of security incidents or breaches?")
+monitoring_systems = booleanQuestion("Are there any monitoring systems in place to track and detect security incidents?")
+connections = multipleQuestion("How are your ICS and IT systems connected?", ["dedicated networks", "shared networks", "cloud-systems"])
+pentesting = booleanQuestion("Are regular security assessments and penetration tests done?")
+process_monitoring = multipleQuestion("What types of software are used to control and monitor your industrial processes?", ["custom software", "commercial off-the-shelf software"])
+
 
