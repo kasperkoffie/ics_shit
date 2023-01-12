@@ -75,14 +75,11 @@ time.sleep(1)
 # Acess Control Section
 access_control_suggestions = []
 
-external_systems = booleanQuestion("Are there any external systems or networks connected to your ICS (e.g. remote access for maintenance and support, third-party vendors)?")
-
 dmz_protection = booleanQuestion("Are the important resources protected by a DMZ?")
 if not dmz_protection:
     access_control_suggestions.append("It is imporant to isolate critical resoures by a DMZ. Think about which resources are critical for operation (e.g. a Database) and encapsulate them in a DMZ.")
 
 wireless = booleanQuestion("Are there any wireless networks in use in your factory?")
-
 if wireless:
     wireless_types = multipleQuestion("What type of wireless technology is used?", ["WiFi", "Zigbee", "LoRa", "NB-IoT", "LTE"])
     if "WiFi" in wireless_types:
@@ -115,13 +112,19 @@ if remote_access:
         access_control_suggestions.append("Install a firewall between internet facing servers and the internet. Configure the firewall to only allow neccessary connections, e.g. only VPN. This limits the attack surface if the server is improperly configured or has unknown vulnerabililites.")
     
 user_available = booleanQuestion("Are separate user accounts used for each employee and access to devices?")
-user_passwords = booleanQuestion("Is there a password policy in place to ensure secure user passwords?")
+user_passwords = booleanQuestion("Is there a password policy in place to ensure secure passwords?")
+if not user_passwords:
+    access_control_suggestions.append("A password policy can help with insecure passwords and mitigate the problems of password sharing for devices which don't support user accounts.")
 if user_available:
-    user_roles = booleanQuestion("Is there role-based access control for the usrers?")
+    user_roles = booleanQuestion("Is there role-based access control for the users?")
     if user_roles:
         user_least_privilege = booleanQuestion("Is the least-privilege principle enforced for those roles and user accounts?")
-
-security_technology = multipleQuestion("What types of security devices and technologies are used in you factory?", ["Firewalls", "Intrusion Detection Systems", "SIEM Systems"])
+        if not user_least_privilege:
+            access_control_suggestions.append("Consider having adminstration to enforce the least-privilege princinple. The least-privilege principle allows users only the least neccessary permissions to perform their required tasks, which can limit the impact of a compromised user account.")
+    else:
+        access_control_suggestions.append("Role based access is important to ensure that users can only act in their required boundaries. Specify the roles according to the least-privilege principle.")
+else:
+    access_control_suggestions.append("For devices and services where possible, add user accounts (with some central management/authentication provider) to those for each employee which needs access. This allows to revoke access if someone leaves the company, avoids passwords sharing and can limit the privileges the employees have in the system.")
 
 print("Initializing Section 2: System Integrity")
 time.sleep(1)
