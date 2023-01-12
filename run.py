@@ -122,26 +122,44 @@ process_monitoring = multipleQuestion("What types of software are used to contro
 print("Initializing Section 3: Confidentiality")
 time.sleep(1)
 
+confidentiality_suggestions = []
+
 # Checks if encryption is  used
 # If encryption is not used, or 'other' is selected, recommend AES / RSA encryption
 encryption_used = booleanQuestion("Are any modern encryption methods used?")
 if encryption_used:
     encryption_type = multipleQuestion("What types of encryption are used?" ["AES", "RSA", "Other"])
+    if encryption_type == 3:
+        confidentiality_suggestions.append("You should integrate AES or RSA")
+else:
+    confidentiality_suggestions.append("You should integrate AES or RSA")
 
 # If no, recommend measures.
 portable_security = booleanQuestion("Are there measures in place to protect against portable device security?")
+if not portable_security:
+    confidentiality_suggestions.append("You should put measures in place to protect portable devices")
 
 # Checks if security patches are regularly installed. If not, recommend to do so.
 is_the_system_patched = booleanQuestion("Are software updates and patches installed regularly for your ICS and IT systems?")
+if not is_the_system_patched:
+    confidentiality_suggestions.append("You should implement a regular patching cycle")
 
 # If not, recommend to do so
 firewalls_or_dmzs = booleanQuestion("Are the different layers of the network separated firewalls or DMZs?")
+if not firewalls_or_dmzs:
+    confidentiality_suggestions.append("You should separate the different layers of networks with firewalls and/or DMZs")
 
 print("Initializing Section 4: Availability")
 time.sleep(1)
+
+availability_suggestions = []
+
 # Checking for network redundancy
 # If the number of routers is smaller than 2, that means you have either a single point of failure or no routers whatsoever. Having at least two or more guarantees redundancy
 number_of_routers = integerQuestion("How many routers is your system protected by?")
+if number_of_routers < 2:
+    availability_suggestions.append("You should have at least 2 or more routers in your network in order to guarantee network redundancy.")
+
 
 # Checking for backup recovery functionality
 # If there is no backup recovery in place, or the back-up is either unscheduled or missing something, give advice to add RAID / regular
@@ -150,18 +168,32 @@ number_of_routers = integerQuestion("How many routers is your system protected b
 backup_recovery = booleanQuestion("Are there backup and disaster recovery measures in place for your ICS and IT environment?")
 if backup_recovery:
     backup_recovery_how = multipleQuestion("What measures are in place?", ["Regular unscheduled back-up (manual)", "Regular scheduled back-up", "RAID integration"])
-    backup_recovery_tested = booleanQuestion("Have these back-up systems been proven to work in realistic test scenarios?")
+    if backup_recovery_how == 1:
+        availability_suggestions.append("Please implement either a regularly scheduled back-up, RAID integration, or both!")
     backup_location_offsite = booleanQuestion("Are back-ups made stored in an off-site location inaccessible through the host network?")
+    if not backup_location_offsite:
+        availability_suggestions.append("Please locate the back-ups off-site inaccessible through the host-network!")
+else:
+    availability_suggestions.append("You should have a regularly scheduled back-up cycle and/or RAID integration in your system!")
+
 
 # Checks if external services are used. If they're used, check if they're highly available & relatively safe.
 # If either of those are not, recommend to use different services.
 external_apis_used = booleanQuestion("Are any external services (such as API's) used?")
 if external_apis_used:
     external_apis_available = booleanQuestion("Are these external services often available?")
+    if not external_apis_available:
+        availability_suggestions.append("Please pick other services / API's with a reasonable uptime!")
     external_apis_safe = booleanQuestion("Are these external API's cyber-secure to a reasonable level?")
+    if not external_apis_available:
+        availability_suggestions.append("Please pick different services that are reasonably cyber-secure!")
 
 # If not, suggest redundancy
 critical_hardware_redudancy = booleanQuestion("Is critical hardware structured redundandly? (i.e. critical database mirrored in two or more instances)")
+if not critical_hardware_redudancy:
+    availability_suggestions.append("Please implement critical hardware reduncancy through hardware mirroring!")
 
 # If shared networks, recommend to either segment it properly or to use secure cloud providers
 how_connected = multipleQuestion("How are your ICS and IT systems connected?", ["Dedicated segmented networks", "Shared networks", "Cloud-based systems from secure providers"])
+if how_connected == 2:
+    availability_suggestions.append("Please implement either network segmentation or cloud architecture!")
