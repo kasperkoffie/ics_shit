@@ -65,25 +65,33 @@ def multipleQuestion(question: str, answers: list[str]) -> list[str]:
         except:
             print("Please only input integer values!")
             
-
-questionOne = Question(AlwaysTrue)
-questionTwo = Question(AlwaysFalse)
-
-print(questionOne.run())
-print(questionTwo.run())
-
 print("ICS Security Suggestion System Version 0x1337")
 print("Initializing Section 1: Access Control")
 time.sleep(1)
 
-external_systems = booleanQuestion("Are there any external systems or networks connected to your ICS (e.g remote access for maintenance and support, third-party vendors)?")
-if external_systems:
-    external_systems_firewall = booleanQuestion("Is there a firewall installed which limits the accessible ports?")
-    external_systems_vpn = booleanQuestion("Is there a VPN used to access the system from outside?")
-    print(external_systems)
-    print(external_systems_firewall)
-    print(external_systems_vpn)
+# We specify our questions and immediatily get the answer
+# with question_answer = boolean/integer/multipleQuestion(question here)
 
-protocols = ["HTTP", "MQTT", "TCP Modbus", "SSH"]
-multiple_answer = multipleQuestion("Which protocols are used inside your ICS?", protocols)
-print(multiple_answer)
+# Acess Control Section
+external_systems = booleanQuestion("Are there any external systems or networks connected to your ICS (e.g. remote access for maintenance and support, third-party vendors)?")
+
+dmz_protection = booleanQuestion("Are the important resources protected by a DMZ?")
+
+wireless = booleanQuestion("Are there any wireless networks in use in your factory?")
+
+if wireless:
+    wireless_types = multipleQuestion("What type of wireless technology is used?", ["WiFi", "Zigbee", "LoRa", "NB-IoT", "LTE"])
+    if "WiFi" in wireless_types:
+        wifi_necessary = booleanQuestion("Is the WiFi network neccessary for operations?")
+        wifi_security = booleanQuestion("Is the WiFi network properly secured with WPA2 or WPA3 and optionally WPA enterprise?")
+        wifi_isolation = booleanQuestion("Is the WiFi network isolated from critical infrastructure?")
+
+password_bruteforce = booleanQuestion("Are there any measures in place to protect against brute force password attacks?")
+password_2fa = booleanQuestion("Is two-factor-authentication used for all possible user accounts and devices?")
+
+remote_access = booleanQuestion("Are there remote access requirements?")
+if remote_access:
+    remote_access_how = multipleQuestion("How is the remote access established?", ["Internet", "Dial-Up", "Site LAN"])
+    remote_access_firewall = booleanQuestion("Is there firewall protection for remote access?")
+    remote_access_authentication = booleanQuestion("Is there sufficient authentication for remote access?")
+
