@@ -78,6 +78,8 @@ access_control_suggestions = []
 external_systems = booleanQuestion("Are there any external systems or networks connected to your ICS (e.g. remote access for maintenance and support, third-party vendors)?")
 
 dmz_protection = booleanQuestion("Are the important resources protected by a DMZ?")
+if not dmz_protection:
+    access_control_suggestions.append("It is imporant to isolate critical resoures by a DMZ. Think about which resources are critical for operation (e.g. a Database) and encapsulate them in a DMZ.")
 
 wireless = booleanQuestion("Are there any wireless networks in use in your factory?")
 
@@ -85,18 +87,33 @@ if wireless:
     wireless_types = multipleQuestion("What type of wireless technology is used?", ["WiFi", "Zigbee", "LoRa", "NB-IoT", "LTE"])
     if "WiFi" in wireless_types:
         wifi_necessary = booleanQuestion("Is the WiFi network neccessary for operations?")
-        wifi_security = booleanQuestion("Is the WiFi network properly secured with WPA2 or WPA3 and optionally WPA enterprise?")
+        if not wifi_necessary:
+            access_control_suggestions.append("Consider disabling the wireless access functionality if it is not neccessary for operations. You could also only enable the wireless network when neccessary and disable it by default.")
+        wifi_secure = booleanQuestion("Is the WiFi network properly secured with WPA2 or WPA3 and optionally WPA enterprise?")
+        if not wifi_secure:
+            access_control_suggestions.append("It is very critical to have good wireless encryption. If devices do not support a secure wireless protection standard, disable their wireless functionality and/or replace them.")
         wifi_isolation = booleanQuestion("Is the WiFi network isolated from critical infrastructure?")
+        if not wifi_isolation:
+            access_control_suggestions.append("The wireless network is a common attack vector and routers often have security vulnerabilities. To limit the impact from a compromised WiFi, separate it from other devices on a network level. If possible for operations, also enable client isolation.")
 
 password_bruteforce = booleanQuestion("Are there any measures in place to protect against brute force password attacks?")
+if not password_bruteforce:
+    access_control_suggestions.append("Install protection measures against bruteforce attacks, such as fail2ban on SSH servers. This applies to internal as well as outwards-facing devices.")
 password_2fa = booleanQuestion("Is two-factor-authentication used for all possible user accounts and devices?")
+if not password_2fa:
+    access_control_suggestions.append("Enable two-factor-authentication with a smart card, security token or other means for user account login. Where this is not possible, make sure that strong passwords are used.")
 
 remote_access = booleanQuestion("Are there remote access requirements?")
 if remote_access:
     remote_access_how = multipleQuestion("How is the remote access established?", ["Internet", "Dial-Up", "Site LAN"])
-    remote_access_firewall = booleanQuestion("Is there firewall protection for remote access?")
-    remote_access_authentication = booleanQuestion("Is there sufficient authentication for remote access?")
-
+    if "Internet" in remote_access_how:
+        vpn = booleanQuestion("Is the access from the internet limited to VPN access (or similar services)?")
+        if not vpn:
+            access_control_suggestions.append("Consider using a secure VPN standard to access your infrastructure from outside. This protects against insecure protocols possibly used by servers and avoids exposing application vulnerabilites to outside attackers.")
+    remote_access_firewall = booleanQuestion("Is there firewall protection for remote access/outwards facing servers?")
+    if not remote_access_firewall:
+        access_control_suggestions.append("Install a firewall between internet facing servers and the internet. Configure the firewall to only allow neccessary connections, e.g. only VPN. This limits the attack surface if the server is improperly configured or has unknown vulnerabililites.")
+    
 user_available = booleanQuestion("Are separate user accounts used for each employee and access to devices?")
 user_passwords = booleanQuestion("Is there a password policy in place to ensure secure user passwords?")
 if user_available:
