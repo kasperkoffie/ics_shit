@@ -165,7 +165,7 @@ confidentiality_suggestions = []
 # If encryption is not used, or 'other' is selected, recommend AES / RSA encryption
 encryption_used = booleanQuestion("Are any modern encryption methods used?")
 if encryption_used:
-    encryption_type = multipleQuestion("What types of encryption are used?" ["AES", "RSA", "Other"])
+    encryption_type = multipleQuestion("What types of encryption are used?", ["AES", "RSA", "Other"])
     if encryption_type == "Other":
         confidentiality_suggestions.append("You should integrate AES or RSA")
 else:
@@ -234,3 +234,21 @@ if not critical_hardware_redudancy:
 how_connected = multipleQuestion("How are your ICS and IT systems connected?", ["Dedicated segmented networks", "Shared networks", "Cloud-based systems from secure providers"])
 if how_connected == "Shared networks":
     availability_suggestions.append("Please implement either network segmentation or cloud architecture!")
+
+print("\n\n\n")
+time.sleep(3)
+print("Access control suggestions:")
+for sug in access_control_suggestions:
+    print(f'\t{sug}')
+input("\nEnter to continue..")
+print("System integrity suggestions:")
+for sug in system_integrity_suggestions:
+    print(f'\t{sug}')
+input("\nEnter to continue..")
+print("Confidentiality suggestions:")
+for sug in confidentiality_suggestions:
+    print(f'\t{sug}')
+input("\nEnter to continue..")
+print("Availability suggestions:")
+for sug in availability_suggestions:
+    print(f'\t{sug}')
