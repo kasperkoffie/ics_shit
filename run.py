@@ -97,6 +97,33 @@ if remote_access:
     remote_access_firewall = booleanQuestion("Is there firewall protection for remote access?")
     remote_access_authentication = booleanQuestion("Is there sufficient authentication for remote access?")
 
+# Checking for network redundancy
+# If the number of routers is smaller than 2, that means you have either a single point of failure or no routers whatsoever. Having at least two or more guarantees redundancy
+number_of_routers = integerQuestion("How many routers is your system protected by?")
+
+# Checking for backup recovery functionality
+# If there is no backup recovery in place, or the back-up is either unscheduled or missing something, give advice to add RAID / regular
+# If not tested, give advice to test
+# If not in an offsite location, store it in an offsite location
+backup_recovery = booleanQuestion("Are there backup and disaster recovery measures in place for your ICS and IT environment?")
+if backup_recovery:
+    backup_recovery_how = multipleQuestion("What measures are in place?", ["Regular unscheduled back-up (manual)", "Regular scheduled back-up", "RAID integration"])
+    backup_recovery_tested = booleanQuestion("Have these back-up systems been proven to work in realistic test scenarios?")
+    backup_location_offsite = booleanQuestion("Are back-ups made stored in an off-site location inaccessible through the host network?")
+
+# Checks if external services are used. If they're used, check if they're highly available & relatively safe.
+# If either of those are not, recommend to use different services.
+external_apis_used = booleanQuestion("Are any external services (such as API's) used?")
+if external_apis_used:
+    external_apis_available = booleanQuestion("Are these external services often available?")
+    external_apis_safe = booleanQuestion("Are these external API's cyber-secure to a reasonable level?")
+
+# If not, suggest redundancy
+critical_hardware_redudancy = booleanQuestion("Is critical hardware structured redundandly? (i.e. critical database mirrored in two or more instances)")
+
+# If shared networks, recommend to either segment it properly or to use secure cloud providers
+how_connected = multipleQuestion("How are your ICS and IT systems connected?", ["Dedicated segmented networks", "Shared networks", "Cloud-based systems from secure providers"])
+
 user_available = booleanQuestion("Are separate user accounts used for each employee and access to devices?")
 user_passwords = booleanQuestion("Is there a password policy in place to ensure secure user passwords?")
 if user_available:
