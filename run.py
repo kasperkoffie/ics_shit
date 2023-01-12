@@ -64,6 +64,12 @@ def multipleQuestion(question: str, answers: list[str]) -> list[str]:
                 return [answers[i] for i in answer]
         except:
             print("Please only input integer values!")
+
+def suggestionsToStr(section_name: str, suggestions: list[str]) -> str:
+    result = section_name + "\n\n"
+    for i, suggestion in enumerate(suggestions):
+        result += f"{i+1}. {suggestion}\n"
+    return result 
             
 print("ICS Security Suggestion System Version 0x1337")
 print("Initializing Section 1: Access Control")
@@ -165,7 +171,7 @@ confidentiality_suggestions = []
 # If encryption is not used, or 'other' is selected, recommend AES / RSA encryption
 encryption_used = booleanQuestion("Are any modern encryption methods used?")
 if encryption_used:
-    encryption_type = multipleQuestion("What types of encryption are used?" ["AES", "RSA", "Other"])
+    encryption_type = multipleQuestion("What types of encryption are used?", ["AES", "RSA", "Other"])
     if encryption_type == 3:
         confidentiality_suggestions.append("You should integrate AES or RSA")
 else:
@@ -234,3 +240,18 @@ if not critical_hardware_redudancy:
 how_connected = multipleQuestion("How are your ICS and IT systems connected?", ["Dedicated segmented networks", "Shared networks", "Cloud-based systems from secure providers"])
 if how_connected == 2:
     availability_suggestions.append("Please implement either network segmentation or cloud architecture!")
+
+
+access_control_output = suggestionsToStr("Access Control", access_control_suggestions)
+system_integrity_output = suggestionsToStr("System Integrity", system_integrity_suggestions)
+confidentiality_output = suggestionsToStr("Confidentiality", confidentiality_suggestions)
+availability_output = suggestionsToStr("Availability", availability_suggestions)
+
+print(access_control_output)
+print(system_integrity_output)
+print(confidentiality_output)
+print(availability_output)
+
+# TODO: write output to file (maybe given by args or ask for name) here
+
+
