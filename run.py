@@ -119,6 +119,24 @@ pentesting = booleanQuestion("Are regular security assessments and penetration t
 process_monitoring = multipleQuestion("What types of software are used to control and monitor your industrial processes?", ["custom software", "commercial off-the-shelf software"])
 
 
+print("Initializing Section 3: Confidentiality")
+time.sleep(1)
+
+# Checks if encryption is  used
+# If encryption is not used, or 'other' is selected, recommend AES / RSA encryption
+encryption_used = booleanQuestion("Are any modern encryption methods used?")
+if encryption_used:
+    encryption_type = multipleQuestion("What types of encryption are used?" ["AES", "RSA", "Other"])
+
+# If no, recommend measures.
+portable_security = booleanQuestion("Are there measures in place to protect against portable device security?")
+
+# Checks if security patches are regularly installed. If not, recommend to do so.
+is_the_system_patched = booleanQuestion("Are software updates and patches installed regularly for your ICS and IT systems?")
+
+# If not, recommend to do so
+firewalls_or_dmzs = booleanQuestion("Are the different layers of the network separated firewalls or DMZs?")
+
 print("Initializing Section 4: Availability")
 time.sleep(1)
 # Checking for network redundancy
