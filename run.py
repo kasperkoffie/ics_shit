@@ -131,12 +131,29 @@ time.sleep(1)
 # System Integrity Section
 system_integrity_suggestions = []
 
-protocols = multipleQuestion("What are the main communication protocols used in your factory?", ["Ethernet/IP", "Modbus", "OPC UA", "MQTT"])
+protocols = multipleQuestion("What are the main communication protocols used in your factory?", ["Ethernet/IP", "Modbus", "OPC UA"])
+if "Ethernet/IP" in protocols:
+    pass
+if "Modbus" in protocols:
+    system_integrity_suggestions.append("Typically, the Modbus protocol does not have authentication or any security. However, there are some encrypted and secure implementations of Modbus. If your ICS does not use those secure standard (likely), make sure that the Modbus devices are properly isolated from the rest of the network.")   
+if "OPC UA" in protocols:
+    system_integrity_suggestions.append("While OPC UA is typically secure, make sure that the servers are configured for maximum security. Read upon the practical security guidelines and apply them.")
+
 incident_response = booleanQuestion("Are there any incident response plans and procedures in place in case of security incidents or breaches?")
+if not incident_response:
+    system_integrity_suggestions.append("Consider creating an incident response plan and a business continuity plan. Those can help you to know what to do when security problems appear and allow you to keep your business running in case of an attack.") 
+
 monitoring_systems = booleanQuestion("Are there any monitoring systems in place to track and detect security incidents?")
-connections = multipleQuestion("How are your ICS and IT systems connected?", ["dedicated networks", "shared networks", "cloud-systems"])
+if not monitoring_systems:
+    system_integrity_suggestions.append("Consider installing a SIEM system to track and detect security incidents. This can help you to find problems quickly and resolve them before they get serious.")
+
 pentesting = booleanQuestion("Are regular security assessments and penetration tests done?")
+if not pentesting:
+    system_integrity_suggestions.append("Consider employing regular security assessments and penetration tests. They help you to detect possible weaknesses in your network and software, so you can improve that and make it harder for actual attackers to get in.")
+
 process_monitoring = multipleQuestion("What types of software are used to control and monitor your industrial processes?", ["custom software", "commercial off-the-shelf software"])
+if "custom software" in process_monitoring:
+    system_integrity_suggestions.append("When using custom software, make sure that the software is still maintained and receives regular security updates. When this is not the case, consider migrating to a commercial solution.")
 
 
 print("Initializing Section 3: Confidentiality")
