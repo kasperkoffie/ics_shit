@@ -166,7 +166,7 @@ confidentiality_suggestions = []
 encryption_used = booleanQuestion("Are any modern encryption methods used?")
 if encryption_used:
     encryption_type = multipleQuestion("What types of encryption are used?" ["AES", "RSA", "Other"])
-    if encryption_type == 3:
+    if encryption_type == "Other":
         confidentiality_suggestions.append("You should integrate AES or RSA")
 else:
     confidentiality_suggestions.append("You should integrate AES or RSA")
@@ -205,7 +205,7 @@ if number_of_routers < 2:
 backup_recovery = booleanQuestion("Are there backup and disaster recovery measures in place for your ICS and IT environment?")
 if backup_recovery:
     backup_recovery_how = multipleQuestion("What measures are in place?", ["Regular unscheduled back-up (manual)", "Regular scheduled back-up", "RAID integration"])
-    if backup_recovery_how == 1:
+    if backup_recovery_how == "Regular unscheduled back-up (manual)":
         availability_suggestions.append("Please implement either a regularly scheduled back-up, RAID integration, or both!")
     backup_location_offsite = booleanQuestion("Are back-ups made stored in an off-site location inaccessible through the host network?")
     if not backup_location_offsite:
@@ -232,5 +232,5 @@ if not critical_hardware_redudancy:
 
 # If shared networks, recommend to either segment it properly or to use secure cloud providers
 how_connected = multipleQuestion("How are your ICS and IT systems connected?", ["Dedicated segmented networks", "Shared networks", "Cloud-based systems from secure providers"])
-if how_connected == 2:
+if how_connected == "Shared networks":
     availability_suggestions.append("Please implement either network segmentation or cloud architecture!")
